@@ -3,13 +3,14 @@
 # Standard library imports
 
 # Remote library imports
-from flask import request, jsonify, make_response
+from flask import request, jsonify, make_response, abort, session
 from flask_restful import Resource
+from werkzeug.exceptions import NotFound, Unauthorized
 
 # Local imports
 from config import app, db, api, Migrate, Flask
 # Add your model imports
-from models import Tournament, Participant, Match
+from models import Tournament, Participant, Match, MatchPart
 
 # Views go here!
 
@@ -34,30 +35,167 @@ class Tournaments(Resource):
 
         response_dict = new_tournament.to_dict()
 
-        response = make_response(
-            response_dict, 201,
-        )
+        response = make_response(response_dict, 201)
         return response
 
 api.add_resource(Tournaments, '/tournaments')
 
+class TournamentsById(Resource):
+    def get(self, id):
+        tournament = Tournament.query.filter_by(id = id).first()
+        if not tournament:
+            return make_response({'error': 'That tournament does not exist yet.'}, 404)
+        return make_response(tournament.to_dict(), 200)
+    
+    def patch(self, id):
+        tournament = Tournament.query.filter_by(id = id).first()
+        if not tournament:
+            return make_response({'error': 'That tournament does not exist yet.'}, 404)
+        data = request.json
+        for key in data:
+            try:
+                setattr(tournament, key, data[key])
+            except ValueError as v_error:
+                return make_response({'errors': [str(v_error)]}, 422)
+        db.session.commit()
+        return make_response(tournament.to_dict())
+    
+    def delete(self, id):
+        tournament = Tournament.query.filter_by(id = id).first()
+        if not tournament:
+            return make_response({'errors': 'That tournament does not exist.'}, 404)
+        db.session.delete(tournament)
+        db.session.commit()
+        return make_response('', 204)
+
+api.add_resource(TournamentsById, '/tournaments/<int:id>')
+
 class Participants(Resource):
+    def get(self):
+        return make_response([p.to_dict() for p in Participant.query.all()])
+
     def post(self):
         data = request.get_json()
-        participant = Participant(
-            name=data['name'],
-            picture=data['picture'],
-            password_hash=data['password']
-        )
-        db.session.add(participant)
+
+        existing_participant = Participant.query.filter_by(name=data['name']).first()
+        if existing_participant:
+            return make_response({'error':'That participant already exists, please use another name.'}, 400)
+        try:
+            new_participant = Participant(name=data['name'], password_hash=data['password'])
+        except Exception as e:
+            return make_response({'error': 'Unable to create participant' + str(e)}, 400)
+            
+        db.session.add(new_participant)
         db.session.commit()
 
-        session['participant_id'] = participant.id
+        session['participant_id'] = new_participant.id
 
-        response = make_response(user.to_dict(), 201)
+        response = make_response(new_participant.to_dict(), 201)
         return response
 
 api.add_resource(Participants, '/participants')
+
+class ParticipantById(Resource):
+    def get(self, id):
+        participant = Participant.query.filter_by(id = id).first()
+        if not participant:
+            return make_response({'error':'Participant does not exist yet.'}, 404)
+        return make_response(participant.to_dict())
+    
+    def patch(self, id):
+        data = request.get_json()
+        participant = Participant.query.filter_by(id = id).first()
+        if not participant:
+            return make_response({'error': 'Participant does not exist yet.'}, 404)
+        for key in data:
+            setattr(participant, key, data[key])
+        
+        db.session.commit()
+        response = make_response(participant.to_dict(), 201)
+        return response
+
+api.add_resource(ParticipantById, '/participants/<int:id>')
+
+class Matches(Resource):
+    def get(self):
+        return make_response([m.to_dict() for m in Match.query.all()])
+    
+    def post(self):
+        data = request.json
+        try:
+            match = Match(tournament_id=data['tournament_id'], matchparts_id=data['matchparts_id'])
+        except ValueError as v_error:
+            return make_response({'errors': [str(v_error)]}, 422)
+        db.session.add(match)
+        db.session.commit()
+        return make_response(match.to_dict(), 204)
+
+api.add_resource(Matches, '/matches')
+
+class MatchById(Resource):
+    def get(self, id):
+        match = Match.query.filter_by(id = id).first()
+        if not match:
+            return make_response({'error':'Match does not exist yet.'}, 404)
+        return make_response(match.to_dict())
+    
+    def patch(self, id):
+        data = request.get_json()
+        match = Match.query.filter_by(id = id).first()
+        if not match:
+            return make_response({'error': 'match does not exist yet.'}, 404)
+        for key in data:
+            setattr(match, key, data[key])
+        
+        db.session.commit()
+        response = make_response(match.to_dict(), 201)
+        return response
+
+api.add_resource(MatchById, '/matches/<int:id>')
+
+class MatchParts(Resource):
+    def get(self):
+        return make_response([mp.to_dict() for mp in MatchPart.query.all()])
+
+api.add_resource(MatchParts, '/matchparts')
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    try:
+        user = Participant.query.filter_by(name=data['name']).first()
+        if user.authenticate(data['password']):
+            session['user_id'] = user.id
+            response = make_response(user.to_dict(), 200)
+            return response
+    except:
+        return make_response({'error': 'Wrong password or name'}, 401)
+
+@app.route('/authorized', methods=['GET'])
+def authorize():
+    try:
+        user = Participant.query.filter_by(id=session.get('user_id')).first()
+        response = make_response(user.to_dict(), 200)
+        return response
+    except:
+        return make_response({'error': 'Account can not be found'}, 404)
+
+@app.route('/logout', methods=['DELETE'])
+def logout():
+    session['user_id'] = None
+    return make_response('', 204)
+
+@app.before_request
+def check_login_status():
+    if (request.endpoint in ['tournaments', 'participants', 'logout'] and request.method != 'GET') \
+            or request.endpoint == 'authorize':
+        if not session.get('user_id'):
+            return make_response({'error': 'Unauthorized user'}, 401)
+
+@app.errorhandler(NotFound)
+def handle_not_found(e):
+    response = make_response('Not Found: Sorry does not exist, 404')
+    return response
 
 @app.route('/')
 def index():

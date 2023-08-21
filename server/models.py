@@ -38,8 +38,10 @@ class Participant(db.Model, SerializerMixin):
 
     _password_hash = db.Column(db.String, nullable=False)
 
-    matches = db.relationship('Match', back_populates='participant')
+    matchparts = db.relationship('MatchPart', back_populates='participants')
     tournaments = association_proxy('matches', 'tournament')
+
+    serialize_rules = ('-matchparts',)
 
     @property
     def password_hash(self):
@@ -66,11 +68,12 @@ class Match(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     tournament_id = db.Column(db.Integer, db.ForeignKey('tournaments.id'))
-    participants_id_1 = db.Column(db.Integer, db.ForeignKey('participants.id'))
-    #participants_id_2 = db.Column(db.Integer, db.ForeignKey('participants.id'))
+    matchparts_id = db.Column(db.Integer, db.ForeignKey('matchparts.id'))
 
     tournament = db.relationship('Tournament', back_populates='matches')
-    participant = db.relationship('Participant', back_populates='matches')
+    matchparts = db.relationship('MatchPart', back_populates='matches')
+
+    serialize_rules = ('-matchparts.matches', '-matchparts.tournament.matchparts')
 
     @validates
     def validate_tournament_id(self, key, new_tournament_id):
@@ -83,3 +86,14 @@ class Match(db.Model, SerializerMixin):
         if not new_participant_id:
             raise ValueError('There must be a participant id.')
         return new_participant_id
+
+class MatchPart(db.Model, SerializerMixin):
+    __tablename__ = 'matchparts'
+
+    id = db.Column(db.Integer, primary_key=True)
+    participants_id = db.Column(db.Integer, db.ForeignKey('participants.id'))
+
+    matches = db.relationship('Match', back_populates='matchparts')
+    participants = db.relationship('Participant', back_populates='matchparts')
+
+    serialize_rules = ('-matches','-participants._password_hash')

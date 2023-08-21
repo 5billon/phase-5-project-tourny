@@ -8,7 +8,7 @@ from faker import Faker
 
 # Local imports
 from app import app
-from models import db, Tournament, Participant, Match
+from models import db, Tournament, Participant, Match, MatchPart
 
 fake = Faker()
 
@@ -16,6 +16,7 @@ with app.app_context():
     Tournament.query.delete()
     Participant.query.delete()
     Match.query.delete()
+    MatchPart.query.delete()
 
     participants = []
     p1 = Participant(name='Tara Monroe', password_hash='password1', picture='https://media.istockphoto.com/id/992637094/photo/british-short-hair-cat-and-golden-retriever.jpg?s=612x612&w=0&k=20&c=MPxqqfyY1mhqlrqD9xCC3NA14qSR0DfZnD5SVJxs2Ik=')
@@ -89,11 +90,19 @@ with app.app_context():
     db.session.add_all(tournaments)
     db.session.commit()
 
+    matchparts = [MatchPart() for mp in range(100)]
+
+    for mp in matchparts:
+        mp.participants = rc(participants)
+
+    db.session.add_all(participants)
+    db.session.commit()
+
     matches = [Match() for m in range(50)]
 
     for m in matches:
         m.tournament = rc(tournaments)
-        m.participant = rc(participants)
+        m.matchparts = rc(matchparts)
 
     db.session.add_all(matches)
     db.session.commit()
