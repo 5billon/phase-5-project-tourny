@@ -185,12 +185,20 @@ def logout():
     session['user_id'] = None
     return make_response('', 204)
 
+@app.route('/check_session')
+def check_session():
+    participant = Participant.query.filter(Participant.id == session.get('participant_id')).first()
+    if participant:
+        return make_response(participant.to_dict())
+    else:
+        return {'error':'Unauthorized user in session'}, 401
+
 @app.before_request
 def check_login_status():
-    if (request.endpoint in ['tournaments', 'participants', 'logout'] and request.method != 'GET') \
+    if (request.endpoint in ['tournaments', 'tournamentbyid', 'logout'] and request.method != 'GET') \
             or request.endpoint == 'authorize':
         if not session.get('user_id'):
-            return make_response({'error': 'Unauthorized user'}, 401)
+            return make_response({'error': 'Unauthorized user in login status'}, 401)
 
 @app.errorhandler(NotFound)
 def handle_not_found(e):

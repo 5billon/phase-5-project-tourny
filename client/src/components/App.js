@@ -1,8 +1,42 @@
 import React, { useEffect, useState } from "react";
-import { Switch, Route } from "react-router-dom";
+import { BrowserRouter as Switch, Route, Router } from "react-router-dom";
+import NavBar from './NavBar'
+import Login from './Login'
+import Signup from './Signup'
+import Home from './Home'
+
+export const Context = React.createContext()
 
 function App() {
-  return <h1>Phase 4 Project Client</h1>;
+
+  const [signedIn, setSignedIn] = useState(false)
+  const [user, setUser] = useState(null)
+  const handleUser = (user) => setUser(user)
+
+  useEffect(() => {
+    fetch('/check_session').then((res)=> {
+      if(res.ok){
+        res.json().then((userObj) => setUser(userObj))
+      }
+    })
+  }, [setUser])
+
+  return (
+    //<Router>
+      <div className="App-Div">
+        <Context.Provider value={[signedIn, setSignedIn]}>
+          <NavBar user={user} handleUser={handleUser}/>
+          
+        </Context.Provider>
+        <Switch>
+          <Route exact path='/' component={Home}/>
+          <Route path="/login" component={()=> <Login handleUser={handleUser}/>}/>
+          <Route path="/signup" component={()=> <Signup handleUser={handleUser}/>}/>
+        </Switch>
+      </div>
+    //</Router>
+
+  )
 }
 
 export default App;

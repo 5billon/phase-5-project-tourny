@@ -5,3 +5,16 @@
   --text: hsla(0, 0%, 100%, 0.88);
 }
 
+.navBar {
+  display:flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #363430;
+  color: rgb(228, 96, 9);
+  padding: 10px;
+
+}
+
+.navbar-stuff {
+  color: rgb(228, 96, 9);
+}
