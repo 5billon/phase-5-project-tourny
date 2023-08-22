@@ -8,13 +8,13 @@ function Signup({ handleUser }) {
     const [error, setError] = useState('');
 
     const formSchema = yup.object().shape({
-        username: yup.string().required("Participants must have a name.").min(2).max(30),
+        name: yup.string().required("Participants must have a name.").min(2).max(30),
         password: yup.string().required("Participants must have a password.").min(6).max(30),
     });
 
     const formik = useFormik({
         initialValues: {
-            username: "",
+            name: "",
             password: "",
         },
         validationSchema: formSchema,
@@ -54,10 +54,10 @@ function Signup({ handleUser }) {
                     <input
                         type="text"
                         className='form-control'
-                        value={formik.values.username}
+                        value={formik.values.name}
                         onChange={formik.handleChange}
-                        name='username'
-                        id='username'
+                        name='name'
+                        id='name'
                         required
                     />
                 </div>

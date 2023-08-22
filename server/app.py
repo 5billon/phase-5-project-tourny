@@ -159,30 +159,45 @@ class MatchParts(Resource):
 
 api.add_resource(MatchParts, '/matchparts')
 
+# @app.route('/login', methods=['POST'])
+# def login():
+#     data = request.get_json()
+#     try:
+#         participant = Participant.query.filter_by(name=data['name']).first()
+#         if participant.authenticate(data['password']):
+#             session['participant_id'] = participant.id
+#             response = make_response(participant.to_dict(), 200)
+#             return response
+#     except:
+#         return make_response({'error': 'Wrong password or name'}, 401)
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    try:
-        user = Participant.query.filter_by(name=data['name']).first()
-        if user.authenticate(data['password']):
-            session['user_id'] = user.id
-            response = make_response(user.to_dict(), 200)
-            return response
-    except:
-        return make_response({'error': 'Wrong password or name'}, 401)
+    name = data['name']
+    password = data['password']
+
+    participant = Participant.query.filter_by(name=name).first()
+    if not participant:
+        return make_response({'error': 'Account not found'}, 404)
+    
+    if participant.authenticate(password):
+        session['participant_id'] = participant.id
+        return make_response(participant.to_dict(), 200)
+    else:
+        return make_response({'error':'Password is not correct'}, 401)
 
 @app.route('/authorized', methods=['GET'])
 def authorize():
     try:
-        user = Participant.query.filter_by(id=session.get('user_id')).first()
-        response = make_response(user.to_dict(), 200)
+        participant = Participant.query.filter_by(id=session.get('participant_id')).first()
+        response = make_response(participant.to_dict(), 200)
         return response
     except:
         return make_response({'error': 'Account can not be found'}, 404)
 
 @app.route('/logout', methods=['DELETE'])
 def logout():
-    session['user_id'] = None
+    session['participant_id'] = None
     return make_response('', 204)
 
 @app.route('/check_session')
@@ -197,7 +212,7 @@ def check_session():
 def check_login_status():
     if (request.endpoint in ['tournaments', 'tournamentbyid', 'logout'] and request.method != 'GET') \
             or request.endpoint == 'authorize':
-        if not session.get('user_id'):
+        if not session.get('participant_id'):
             return make_response({'error': 'Unauthorized user in login status'}, 401)
 
 @app.errorhandler(NotFound)

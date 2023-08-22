@@ -1,6 +1,6 @@
 import React from 'react';
 import SignInButton from './SignInButton'
-import { Link, useHistory, BrowserRouter as Router } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 
 function NavBar({ user, handleUser }) {
     const history = useHistory()
@@ -19,13 +19,16 @@ function NavBar({ user, handleUser }) {
         history.push('/signup', { from: history.location.pathname })
     }
     return (
-        <Router>
-            <div className='navBar'>
-                <div>
-                    <Link className='navbar-stuff' to='/'>From First to Last</Link>
-                </div>
-                <SignInButton />
-            
+
+        <div className='navBar'>
+            <div>
+                <Link className='navbar-stuff' to='/'>From First to Last</Link>
+            </div>
+            <div>
+                <Link className='navbar-stuff' to='/tournaments'>Tournaments</Link>
+            </div>
+            <SignInButton />
+
             <div>
                 {user ? (
                     <>
@@ -38,8 +41,8 @@ function NavBar({ user, handleUser }) {
                     </>
                 )}
             </div>
-            </div>
-        </Router>
+        </div>
+
     )
 
 }

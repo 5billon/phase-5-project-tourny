@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 function Login({ handleUser }) {
-    const [username, setUsername] = useState('')
+    const [name, setName] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const history = useHistory()
@@ -14,7 +14,7 @@ function Login({ handleUser }) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ username: username, password: password }),
+                body: JSON.stringify({ name: name, password: password }),
             });
 
             const data = await response.json();
@@ -53,8 +53,8 @@ function Login({ handleUser }) {
                     <input
                         type="text"
                         className='form-control'
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                         required
                     />
                 </div>
