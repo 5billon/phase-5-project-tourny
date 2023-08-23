@@ -3,21 +3,21 @@
   --header: #fff;
   --link: #61dafb;
   --text: hsla(0, 0%, 100%, 0.88);
-  background-color: grey;
+  background-color: rgb(34, 123, 182);
 }
 
 .navBar {
   display:flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #363430;
-  color: rgb(228, 96, 9);
+  background-color: #14b7bd;
+  color: rgb(212, 90, 8);
   padding: 10px;
 
 }
 
 .navbar-stuff {
-  color: rgb(228, 96, 9);
+  color: rgb(212, 90, 8);
 }
 
 .home-title-div {

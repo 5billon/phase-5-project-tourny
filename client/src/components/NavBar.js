@@ -27,6 +27,9 @@ function NavBar({ user, handleUser }) {
             <div>
                 <Link className='navbar-stuff' to='/tournaments'>Tournaments</Link>
             </div>
+            <div>
+                <Link className='navbar-stuff' to='/createtournament'>Create Tournament</Link>
+            </div>
             <SignInButton />
 
             <div>

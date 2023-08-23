@@ -5,6 +5,8 @@ import Login from './Login'
 import Signup from './Signup'
 import Home from './Home'
 import Tournaments from './Tournaments'
+import CreateTournament from './CreateTournament'
+import TournamentPage from "./TournamentPage";
 
 export const Context = React.createContext()
 
@@ -35,6 +37,8 @@ function App() {
           <Route path="/login" component={()=> <Login handleUser={handleUser}/>}/>
           <Route path="/signup" component={()=> <Signup handleUser={handleUser}/>}/>
           <Route path='/tournaments' component={Tournaments}/>
+          <Route path='/createtournament' component={()=> <CreateTournament user={user}/>}/>
+          <Route path='/tournament/:pageId' component={TournamentPage}/>
         </Switch>
       </div>
     </Router>

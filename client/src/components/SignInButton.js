@@ -6,7 +6,7 @@ function SignInButton() {
 
     return (
         <button onClick={() => setSignedIn(!signedIn)}>
-            {signedIn ? 'Sign Out' : 'Sign in'}
+            {signedIn ? 'useContext on' : 'useContext off'}
 
         </button>
     )
