@@ -12,7 +12,7 @@ export const Context = React.createContext()
 
 function App() {
 
-  const [signedIn, setSignedIn] = useState(false)
+  const [context, setContext] = useState(false)
   const [user, setUser] = useState(null)
   const handleUser = (user) => setUser(user)
 
@@ -27,7 +27,7 @@ function App() {
   return (
     <Router>
       <div className="App-Div">
-        <Context.Provider value={[signedIn, setSignedIn]}>
+        <Context.Provider value={[context, setContext]}>
           <NavBar user={user} handleUser={handleUser}/>
           
         </Context.Provider>
@@ -38,7 +38,7 @@ function App() {
           <Route path="/signup" component={()=> <Signup handleUser={handleUser}/>}/>
           <Route path='/tournaments' component={Tournaments}/>
           <Route path='/createtournament' component={()=> <CreateTournament user={user}/>}/>
-          <Route path='/tournament/:pageId' component={TournamentPage}/>
+          <Route path='/tournament/:id' component={TournamentPage}/>
         </Switch>
       </div>
     </Router>

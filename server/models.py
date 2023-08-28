@@ -35,13 +35,15 @@ class Participant(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     picture = db.Column(db.String)
+    match_id = db.Column(db.Integer, db.ForeignKey('matches.id'))
 
     _password_hash = db.Column(db.String, nullable=False)
 
     matchparts = db.relationship('MatchPart', back_populates='participants')
+    matches = db.relationship('Match', secondary='matchparts', back_populates='participants')
     tournaments = association_proxy('matches', 'tournament')
 
-    serialize_rules = ('-matchparts',)
+    serialize_rules = ('-matchparts', '-matches.participants', '-matches.tournaments')
 
     @property
     def password_hash(self):
@@ -72,8 +74,9 @@ class Match(db.Model, SerializerMixin):
 
     tournament = db.relationship('Tournament', back_populates='matches')
     matchparts = db.relationship('MatchPart', back_populates='matches')
+    participants = db.relationship('Participant', secondary='matchparts', back_populates='matches')
 
-    serialize_rules = ('-matchparts.matches', '-matchparts.tournament.matchparts')
+    serialize_rules = ('-matchparts.matches', '-matchparts.tournament.matchparts', '-participants.matches')
 
     @validates
     def validate_tournament_id(self, key, new_tournament_id):
@@ -94,6 +97,6 @@ class MatchPart(db.Model, SerializerMixin):
     participants_id = db.Column(db.Integer, db.ForeignKey('participants.id'))
 
     matches = db.relationship('Match', back_populates='matchparts')
-    participants = db.relationship('Participant', back_populates='matchparts')
+    participants = db.relationship('Participant', back_populates='matchparts', overlaps='matches')
 
-    serialize_rules = ('-matches','-participants._password_hash')
+    serialize_rules = ('-matches','-participants.password_hash')

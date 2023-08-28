@@ -70,6 +70,23 @@ class TournamentsById(Resource):
 
 api.add_resource(TournamentsById, '/tournaments/<int:id>')
 
+class ParticipantByTournamentId(Resource):
+    def get(self, id):
+        tournament = Tournament.query.filter_by(id=id).first()
+        if not tournament:
+            return make_response({'error': 'That tournament does not exist yet.'}, 404)
+        
+        participants = [participant.to_dict() for participant in tournament.participants]
+        # matches = tournament.matches
+        # participants = []
+
+        # for match in matches:
+        #     participants.extend([participant.to_dict()for participant in match.participants])
+
+        return make_response(participants, 200)
+
+api.add_resource(ParticipantByTournamentId, '/tournaments/<int:id>/participants')
+
 class Participants(Resource):
     def get(self):
         return make_response([p.to_dict() for p in Participant.query.all()])

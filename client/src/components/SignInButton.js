@@ -2,11 +2,11 @@ import React, {useContext} from 'react'
 import { Context } from './App'
 
 function SignInButton() {
-    const [signedIn, setSignedIn] = useContext(Context)
+    const [context, setContext] = useContext(Context)
 
     return (
-        <button onClick={() => setSignedIn(!signedIn)}>
-            {signedIn ? 'useContext on' : 'useContext off'}
+        <button onClick={() => setContext(!context)}>
+            {context ? 'useContext on' : 'useContext off'}
 
         </button>
     )
