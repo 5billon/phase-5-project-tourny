@@ -32,8 +32,9 @@ function CreateTournament({ user }) {
         }
     })
     return (
-        <div classname='create-tourny'>
+        <div class='create-tourny'>
             {user ? (
+                <div className="create-tourny-form-container">
                 <>
                     <h3 className="create-tourny-header">Create Your Own Tournament Here!</h3>
                     {form && <div className="create-torny-state-div">{form}</div>}
@@ -62,13 +63,14 @@ function CreateTournament({ user }) {
                                 required
                             />
                         </div>
-                        <div className="tourny-button">
-                            <button type='submit'>
+                        {/* <div className="tourny-button"> */}
+                            <button type='submit' class='tourny-button'>
                                 Create Tournament!
                             </button>
-                        </div>
+                        {/* </div> */}
                     </form>
                 </>
+                </div>
             ) : (
                 <h2>Please login and signup to create a tournament!</h2>
             )

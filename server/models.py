@@ -13,7 +13,7 @@ class Tournament(db.Model, SerializerMixin):
     tournament_contest = db.Column(db.String, nullable=False)
 
     matches = db.relationship('Match', back_populates='tournament')
-    participants = association_proxy('matches', 'participant')
+    participants = association_proxy('matches', 'participants')
 
     serialize_rules = ('-matches',)
 
@@ -39,11 +39,11 @@ class Participant(db.Model, SerializerMixin):
 
     _password_hash = db.Column(db.String, nullable=False)
 
-    matchparts = db.relationship('MatchPart', back_populates='participants')
-    matches = db.relationship('Match', secondary='matchparts', back_populates='participants')
+    matchparts = db.relationship('MatchPart', back_populates='participant')
+    
     tournaments = association_proxy('matches', 'tournament')
 
-    serialize_rules = ('-matchparts', '-matches.participants', '-matches.tournaments')
+    serialize_rules = ('-matchparts',)
 
     @property
     def password_hash(self):
@@ -74,9 +74,10 @@ class Match(db.Model, SerializerMixin):
 
     tournament = db.relationship('Tournament', back_populates='matches')
     matchparts = db.relationship('MatchPart', back_populates='matches')
-    participants = db.relationship('Participant', secondary='matchparts', back_populates='matches')
 
-    serialize_rules = ('-matchparts.matches', '-matchparts.tournament.matchparts', '-participants.matches')
+    participants = association_proxy('matchparts', 'participant')
+
+    serialize_rules = ('-matchparts.matches', '-matchparts.tournament.matchparts', '-matchparts.participants._password_hash', '-matchparts.participants.matches', '-matchparts.participants.match_id')
 
     @validates
     def validate_tournament_id(self, key, new_tournament_id):
@@ -97,6 +98,6 @@ class MatchPart(db.Model, SerializerMixin):
     participants_id = db.Column(db.Integer, db.ForeignKey('participants.id'))
 
     matches = db.relationship('Match', back_populates='matchparts')
-    participants = db.relationship('Participant', back_populates='matchparts', overlaps='matches')
+    participant = db.relationship('Participant', back_populates='matchparts')
 
     serialize_rules = ('-matches','-participants.password_hash')

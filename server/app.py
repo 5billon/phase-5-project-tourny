@@ -124,12 +124,24 @@ class ParticipantById(Resource):
         participant = Participant.query.filter_by(id = id).first()
         if not participant:
             return make_response({'error': 'Participant does not exist yet.'}, 404)
-        for key in data:
-            setattr(participant, key, data[key])
+        # for key in data:
+        #     setattr(participant, key, data[key])
+        if 'picture' in data:
+            participant.picture = data['picture']
         
         db.session.commit()
         response = make_response(participant.to_dict(), 201)
         return response
+    
+    def delete(self, id):
+        participant = Participant.query.get(id)
+        if not participant:
+            return make_response({'error': 'Participant does not exist.'}, 404)
+        
+        db.session.delete(participant)
+        db.session.commit()
+
+        return {'message': 'Participant has been deleted'}, 204
 
 api.add_resource(ParticipantById, '/participants/<int:id>')
 

@@ -1,12 +1,12 @@
-import React, {useContext} from 'react'
-import { Context } from './App'
+import React from 'react'
+import { usePictureContext } from './PictureContext'
 
 function SignInButton() {
-    const [context, setContext] = useContext(Context)
-
+    const {isPictureVisable, setPictureVisible} = usePictureContext()
+    console.log(isPictureVisable)
     return (
-        <button onClick={() => setContext(!context)}>
-            {context ? 'useContext on' : 'useContext off'}
+        <button onClick={() => setPictureVisible(!isPictureVisable)}>
+            {isPictureVisable ? 'SecretButton On' : 'SecretButton Off'}
 
         </button>
     )

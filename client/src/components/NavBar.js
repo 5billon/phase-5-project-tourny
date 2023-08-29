@@ -31,10 +31,10 @@ function NavBar({ user, handleUser }) {
                 <Link className='navbar-stuff' to='/createtournament'>Create Tournament</Link>
             </div>
             <SignInButton />
-
             <div>
                 {user ? (
                     <>
+                        <Link className='navbar-stuff' to={`/userprofile/${user.id}`}>Profile</Link>
                         <button onClick={handleLogout}>Log Out</button>
                     </>
                 ) : (
@@ -45,9 +45,7 @@ function NavBar({ user, handleUser }) {
                 )}
             </div>
         </div>
-
     )
-
 }
 
 export default NavBar;
