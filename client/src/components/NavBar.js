@@ -1,5 +1,5 @@
 import React from 'react';
-import SignInButton from './SignInButton'
+import ContextButton from './ContextButton'
 import { Link, useHistory } from 'react-router-dom'
 
 function NavBar({ user, handleUser }) {
@@ -30,7 +30,7 @@ function NavBar({ user, handleUser }) {
             <div>
                 <Link className='navbar-stuff' to='/createtournament'>Create Tournament</Link>
             </div>
-            <SignInButton />
+            <ContextButton />
             <div>
                 {user ? (
                     <>
