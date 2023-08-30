@@ -5,8 +5,8 @@ import Picture from './Picture';
 function Home() {
     const title = 'Welcome to From First to Last!'
     const stuff = 'Here you can create personal and professional tournaments to keep track of!'
-    const {isPictureVisible} = useContext(PictureContext)
-    
+    const { isPictureVisible } = useContext(PictureContext)
+
     return (
         <div className='home-div'>
             <div className='home-title-div'>

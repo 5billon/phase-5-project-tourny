@@ -77,11 +77,6 @@ class ParticipantByTournamentId(Resource):
             return make_response({'error': 'That tournament does not exist yet.'}, 404)
         
         participants = [participant.to_dict() for participant in tournament.participants]
-        # matches = tournament.matches
-        # participants = []
-
-        # for match in matches:
-        #     participants.extend([participant.to_dict()for participant in match.participants])
 
         return make_response(participants, 200)
 
@@ -124,8 +119,6 @@ class ParticipantById(Resource):
         participant = Participant.query.filter_by(id = id).first()
         if not participant:
             return make_response({'error': 'Participant does not exist yet.'}, 404)
-        # for key in data:
-        #     setattr(participant, key, data[key])
         if 'picture' in data:
             participant.picture = data['picture']
         
@@ -188,17 +181,6 @@ class MatchParts(Resource):
 
 api.add_resource(MatchParts, '/matchparts')
 
-# @app.route('/login', methods=['POST'])
-# def login():
-#     data = request.get_json()
-#     try:
-#         participant = Participant.query.filter_by(name=data['name']).first()
-#         if participant.authenticate(data['password']):
-#             session['participant_id'] = participant.id
-#             response = make_response(participant.to_dict(), 200)
-#             return response
-#     except:
-#         return make_response({'error': 'Wrong password or name'}, 401)
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()

@@ -1,24 +1,13 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 
 function UserProfile(props) {
-    const [user, setUser] = useState({})
     const [newProfilePicture, setNewProfilePicture] = useState('')
     const [isConfirmDeleteOpen, setConfirmDelete] = useState(false)
     const participantId = props.match.params.id;
+    const { user, setUser } = props
     const history = useHistory()
-
-
-    useEffect(() => {
-        fetch(`/participants/${participantId}`)
-            .then(r => r.json())
-            .then(userData => {
-                console.log('userData:', userData);
-                setUser(userData)
-            })
-
-    }, [participantId])
 
     const updateProfilePicture = () => {
         const data = { picture: newProfilePicture }
@@ -49,19 +38,26 @@ function UserProfile(props) {
         setConfirmDelete(true)
     }
 
-    const confirmDeleteUser = () => {
+    const logoutUser = () => {
+        fetch('/logout', {
+            method: 'DELETE',
+        })
+    }
+
+    const deleteProfile = () => {
         fetch(`/participants/${participantId}`, {
             method: 'DELETE',
         })
-            .then(r => {
-                if (r.ok) {
-                    console.log('Profiled deleted successfully')
+            .then(profileDeleteResp => {
+                if (profileDeleteResp.ok) {
+                    console.log('Profile deleted')
+                    logoutUser()
+                    setConfirmDelete(false)
+                    setUser(null)
                     history.push('/')
-                    window.location.reload()
                 } else {
-                    console.log('Profile was NOT deleted.')
+                    console.log('Profile was NOT deleted')
                 }
-                setConfirmDelete(false)
             })
     }
 
@@ -81,17 +77,17 @@ function UserProfile(props) {
                         </p>
                     </div>
                     <input type='text' placeholder="Enter Image URL" value={newProfilePicture} onChange={handleInput} />
-                    <button class='update-pic-button'onClick={updateProfilePicture}>Update Profile Picture</button>
-                    <button class='delete-profile-button'onClick={deleteUserProfile}>Delete Profile</button>
+                    <button class='update-pic-button' onClick={updateProfilePicture}>Update Profile Picture</button>
+                    <button class='delete-profile-button' onClick={deleteUserProfile}>Delete Profile</button>
                 </div>
             ) : (
                 <p>Loading...</p>
             )}
             {isConfirmDeleteOpen && (
-                <div>
+                <div class='delete-confirm-div'>
                     <p>Are you sure you want to delete your profile?</p>
                     <button onClick={cancelDeleteUser}>No!</button>
-                    <button onClick={confirmDeleteUser}>Yes, please.</button>
+                    <button onClick={deleteProfile}>Yes, please.</button>
                 </div>
             )}
         </div>

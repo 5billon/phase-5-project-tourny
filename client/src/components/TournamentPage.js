@@ -8,20 +8,20 @@ function TournamentPage(props) {
 
     useEffect(() => {
         fetch(`/tournaments/${tournamentId}`)
-        .then((r) => {
-            if(!r.ok){
-                throw new Error('Network error')
-            }
-            return r.json()
-        })
-        .then((data) => {
-            setTournamentData(data)
-        })
-        .catch((error) => {
-            console.error('Error when fetching tournament data', error)
-        })
+            .then((r) => {
+                if (!r.ok) {
+                    throw new Error('Network error')
+                }
+                return r.json()
+            })
+            .then((data) => {
+                setTournamentData(data)
+            })
+            .catch((error) => {
+                console.error('Error when fetching tournament data', error)
+            })
         fetch(`/tournaments/${tournamentId}/participants`)
-            .then((r)=>{
+            .then((r) => {
                 if (!r.ok) {
                     throw new Error('Network error')
                 }
@@ -34,7 +34,6 @@ function TournamentPage(props) {
                 console.error('Error when fetching the participants data', error)
             })
     }, [tournamentId])
-
     return (
         <div class='tourny-details-div'>
             {tournamentData ? (
@@ -45,12 +44,11 @@ function TournamentPage(props) {
             ) : (
                 <p>Loading...</p>
             )}
-
             {participants.length > 0 ? (
                 <div class='tourny-participant-div'>
                     <h2>Participants</h2>
                     <ul>
-                        {participants.map((participant)=> (
+                        {participants.map((participant) => (
                             <li key={participant.id}>{participant.name}</li>
                         ))}
                     </ul>

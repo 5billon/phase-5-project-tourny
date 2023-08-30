@@ -9,7 +9,6 @@ function Tournaments() {
             .then(r => r.json())
             .then(tournamentsData => setTournaments(tournamentsData))
     }, [])
-
     return (
         <div className="tournaments">
             {tournaments.map((tournament) => (

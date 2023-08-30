@@ -10,11 +10,7 @@ import TournamentPage from "./TournamentPage";
 import UserProfile from './UserProfile'
 import { PictureProvider } from "./PictureContext";
 
-//export const Context = React.createContext()
-
 function App() {
-
-  //const [context, setContext] = useState(false)
   const [user, setUser] = useState(null)
   const handleUser = (user) => setUser(user)
 
@@ -38,7 +34,7 @@ function App() {
             <Route path='/tournaments' component={Tournaments} />
             <Route path='/createtournament' component={() => <CreateTournament user={user} />} />
             <Route path='/tournament/:id' component={TournamentPage} />
-            <Route path='/userprofile/:id' component={UserProfile} />
+            <Route path='/userprofile/:id' component={(props) => <UserProfile {...props} user={user} setUser={setUser} />} />
           </Switch>
         </PictureProvider>
       </div>

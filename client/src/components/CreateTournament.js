@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useFormik } from 'formik';
 
 function CreateTournament({ user }) {
@@ -27,49 +27,45 @@ function CreateTournament({ user }) {
                         })
                     }
                 })
-
-
         }
     })
     return (
         <div class='create-tourny'>
             {user ? (
                 <div className="create-tourny-form-container">
-                <>
-                    <h3 className="create-tourny-header">Create Your Own Tournament Here!</h3>
-                    {form && <div className="create-torny-state-div">{form}</div>}
-                    <form onSubmit={formik.handleSubmit}>
-                        <div className="tourny-name">
-                            <label className="form-label">What is the name of your Tournament?</label>
-                            <input
-                                type="text"
-                                className='form-control'
-                                value={formik.values.name}
-                                onChange={formik.handleChange}
-                                name='name'
-                                id='name'
-                                required
-                            />
-                        </div>
-                        <div className="tourny-contest">
-                            <label className="form-label">What is being played?</label>
-                            <input
-                                type="text"
-                                className='form-control'
-                                value={formik.values.tournament_contest}
-                                onChange={formik.handleChange}
-                                name='tournament_contest'
-                                id='tournament_contest'
-                                required
-                            />
-                        </div>
-                        {/* <div className="tourny-button"> */}
+                    <>
+                        <h3 className="create-tourny-header">Create Your Own Tournament Here!</h3>
+                        {form && <div className="create-torny-state-div">{form}</div>}
+                        <form onSubmit={formik.handleSubmit}>
+                            <div className="tourny-name">
+                                <label className="form-label">What is the name of your Tournament?</label>
+                                <input
+                                    type="text"
+                                    className='form-control'
+                                    value={formik.values.name}
+                                    onChange={formik.handleChange}
+                                    name='name'
+                                    id='name'
+                                    required
+                                />
+                            </div>
+                            <div className="tourny-contest">
+                                <label className="form-label">What is being played?</label>
+                                <input
+                                    type="text"
+                                    className='form-control'
+                                    value={formik.values.tournament_contest}
+                                    onChange={formik.handleChange}
+                                    name='tournament_contest'
+                                    id='tournament_contest'
+                                    required
+                                />
+                            </div>
                             <button type='submit' class='tourny-button'>
                                 Create Tournament!
                             </button>
-                        {/* </div> */}
-                    </form>
-                </>
+                        </form>
+                    </>
                 </div>
             ) : (
                 <h2>Please login and signup to create a tournament!</h2>

@@ -36,11 +36,9 @@ class Participant(db.Model, SerializerMixin):
     name = db.Column(db.String, nullable=False)
     picture = db.Column(db.String)
     match_id = db.Column(db.Integer, db.ForeignKey('matches.id'))
-
     _password_hash = db.Column(db.String, nullable=False)
 
     matchparts = db.relationship('MatchPart', back_populates='participant')
-    
     tournaments = association_proxy('matches', 'tournament')
 
     serialize_rules = ('-matchparts',)
@@ -74,7 +72,6 @@ class Match(db.Model, SerializerMixin):
 
     tournament = db.relationship('Tournament', back_populates='matches')
     matchparts = db.relationship('MatchPart', back_populates='matches')
-
     participants = association_proxy('matchparts', 'participant')
 
     serialize_rules = ('-matchparts.matches', '-matchparts.tournament.matchparts', '-matchparts.participants._password_hash', '-matchparts.participants.matches', '-matchparts.participants.match_id')
