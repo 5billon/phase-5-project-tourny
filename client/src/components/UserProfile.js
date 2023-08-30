@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react"
 import React from 'react'
+import { useHistory } from 'react-router-dom'
 
 function UserProfile(props) {
     const [user, setUser] = useState({})
     const [newProfilePicture, setNewProfilePicture] = useState('')
     const [isConfirmDeleteOpen, setConfirmDelete] = useState(false)
     const participantId = props.match.params.id;
-    
+    const history = useHistory()
+
 
     useEffect(() => {
         fetch(`/participants/${participantId}`)
@@ -15,16 +17,16 @@ function UserProfile(props) {
                 console.log('userData:', userData);
                 setUser(userData)
             })
-            
+
     }, [participantId])
 
     const updateProfilePicture = () => {
-        const data = {picture:newProfilePicture}
+        const data = { picture: newProfilePicture }
 
         fetch(`/participants/${participantId}`, {
             method: 'PATCH',
             headers: {
-                'Content-Type' : 'application/json',
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
         })
@@ -54,6 +56,8 @@ function UserProfile(props) {
             .then(r => {
                 if (r.ok) {
                     console.log('Profiled deleted successfully')
+                    history.push('/')
+                    window.location.reload()
                 } else {
                     console.log('Profile was NOT deleted.')
                 }
@@ -68,15 +72,17 @@ function UserProfile(props) {
     return (
         <div>
             {user ? (
-                <div>
+                <div class='profile-div'>
                     <h1>Profile</h1>
-                    <p>Username: {user.name}</p>
-                    <p>Profile Picture:
-                        <img src={user.picture}/> 
-                    </p>
-                    <input type='text' placeholder="Enter Image URL" value={newProfilePicture} onChange={handleInput}/>
-                    <button onClick={updateProfilePicture}>Update Profile Picture</button>
-                    <button onClick={deleteUserProfile}>Delete Profile</button>
+                    <p class='username'>Username: {user.name}</p>
+                    <div>
+                        <p class='profile-pic'>Profile Picture:
+                            <img class='profile-picture' src={user.picture} alt='' />
+                        </p>
+                    </div>
+                    <input type='text' placeholder="Enter Image URL" value={newProfilePicture} onChange={handleInput} />
+                    <button class='update-pic-button'onClick={updateProfilePicture}>Update Profile Picture</button>
+                    <button class='delete-profile-button'onClick={deleteUserProfile}>Delete Profile</button>
                 </div>
             ) : (
                 <p>Loading...</p>

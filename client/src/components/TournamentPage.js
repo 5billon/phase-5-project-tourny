@@ -36,9 +36,9 @@ function TournamentPage(props) {
     }, [tournamentId])
 
     return (
-        <div>
+        <div class='tourny-details-div'>
             {tournamentData ? (
-                <div>
+                <div class='tourny-header-div'>
                     <h1>Tournament Details</h1>
                     <p>Tournament Name: {tournamentData.name}</p>
                 </div>
@@ -47,7 +47,7 @@ function TournamentPage(props) {
             )}
 
             {participants.length > 0 ? (
-                <div>
+                <div class='tourny-participant-div'>
                     <h2>Participants</h2>
                     <ul>
                         {participants.map((participant)=> (
