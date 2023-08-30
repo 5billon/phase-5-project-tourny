@@ -85,9 +85,9 @@ function UserProfile(props) {
             )}
             {isConfirmDeleteOpen && (
                 <div class='delete-confirm-div'>
-                    <p>Are you sure you want to delete your profile?</p>
-                    <button onClick={cancelDeleteUser}>No!</button>
-                    <button onClick={deleteProfile}>Yes, please.</button>
+                    <p class='delete-confirm-text'>Are you sure you want to delete your profile?</p>
+                    <button class='delete-confirm-no-button'onClick={cancelDeleteUser}>No!</button>
+                    <button class='delete-confirm-yes-button'onClick={deleteProfile}>Yes, please.</button>
                 </div>
             )}
         </div>

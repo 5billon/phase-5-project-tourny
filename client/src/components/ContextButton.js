@@ -1,7 +1,7 @@
 import React from 'react'
 import { usePictureContext } from './PictureContext'
 
-function SignInButton() {
+function ContextButton() {
     const {isPictureVisable, setPictureVisible} = usePictureContext()
     console.log(isPictureVisable)
     return (
@@ -12,4 +12,4 @@ function SignInButton() {
     )
 }
 
-export default SignInButton
+export default ContextButton
