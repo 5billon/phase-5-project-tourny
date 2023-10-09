@@ -78,7 +78,7 @@ function UserProfile(props) {
                     </div>
                     <input type='text' placeholder="Enter Image URL" value={newProfilePicture} onChange={handleInput} />
                     <button class='update-pic-button' onClick={updateProfilePicture}>Update Profile Picture</button>
-                    <button class='delete-profile-button' onClick={deleteUserProfile}>Delete Profile</button>
+                    <button class='delete-profile-button' onClick={deleteUserProfile}>Delete Profile Picture</button>
                 </div>
             ) : (
                 <p>Loading...</p>
